@@ -30,153 +30,197 @@ var player;
 var world;
 var person;
 var playerObject;
-var entitiesLayer;
+
+var playerContainer = new PIXI.Container();
+var playerTextures;
+var walkingClips;
 
 	//.add("music.mp3")
 //load stuff 
 PIXI.loader
 	.add('map', "assets/worldmap.json")
 	.add("assets/tileset.png")
-	.add("assets/player.png")
+	.add("assets/playermovement.json")
 	.load(ready);
 	
 function ready() {
 	var tu = new TileUtilities(PIXI);
 	world = tu.makeTiledWorld("map", "assets/tileset.png");
 	
-	player = new PIXI.Sprite(PIXI.Texture.fromImage("assets/player.png"));
+	playerTextures = [PIXI.Texture.fromFrame("walkingup1.png"), PIXI.Texture.fromFrame("walkingright1.png"), PIXI.Texture.fromFrame("walkingdown1.png"), PIXI.Texture.fromFrame("walkingleft1.png")];
+	
+	walkingClips = [new PIXI.extras.MovieClip.fromFrames(["walkingup1.png", "walkingup2.png", "walkingup3.png", "walkingup4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingright1.png", "walkingright2.png", "walkingright3.png", "walkingright4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingdown1.png", "walkingdown2.png", "walkingdown3.png", "walkingdown4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingleft1.png", "walkingleft2.png", "walkingleft3.png", "walkingleft4.png"])];
 	
 	//music = PIXI.audioManager.getAudio("music.mp3");
 	//music.loop = true;
 	//music.volume = 0.6;
 	
-	stage.addChild(menuContainer);
+	stage.addChild(gameContainer);
 	currScene = new playGame();
 	animate();
 }
 
-
-var left = 0;
+var up = 0;
 var right = 1;
-var up = 2;
-var down = 3;
-var stop = 4;
+var down = 2;
+var left = 3;
+
 var tilex;
 var tiley;
 
+var dirHistory = [];
+
 //play game
 var playGame = function() {
-	this.direction = stop;
 	this.moving = false;
-	this.hasloltres = false;
-	this.hasship = false;
-	this.hassidekick = false;
 	
-	stage.addChild(world);
-	
-	tilex = 52;
-	tiley = 24;
-	
+	gameContainer.addChild(world);
 	playerObject = world.getObject("person");
 	
-	player.x = playerObject.x;
-	player.y = playerObject.y;
-	player.anchor.x = 0.0;
-	player.anchor.y = 1.25;
 	
-	entitiesLayer = world.getObject("Entities");
-	entitiesLayer.addChild(player);
+	playerContainer.width = 32;
+	playerContainer.height = 32;
+	playerContainer.x = playerObject.x;
+	playerContainer.y = playerObject.y;
+	gameContainer.addChild(playerContainer);
 	
-	stage.x = -player.x*scale + renderer.width/2 - player.width/2*scale;
-	stage.y = -player.y*scale + renderer.height/2 + player.height/2*scale;
+	tilex = 52;
+	tiley = 25;
 	
+	player = new PIXI.Sprite(playerTextures[down]);
+	player.anchor.x = 0;
+	player.anchor.y = 0.25;
+	playerContainer.addChild(player);
+	
+	for (var i=0; i<4; i++) {
+		walkingClips[i].anchor.x = 0;
+		walkingClips[i].anchor.y = 0.25;
+		walkingClips[i].visible = false;
+		walkingClips[i].animationSpeed = 0.1;
+		playerContainer.addChild(walkingClips[i]);
+	}
+	
+	stage.x = -playerContainer.x*scale + renderer.width/2 - playerContainer.width/2*scale;
+	stage.y = -playerContainer.y*scale + renderer.height/2 + playerContainer.height/2*scale;
 }
 
 playGame.prototype.move = function() {
-	if (currScene.direction == stop) {
-		currScene.moving = false;
+	if (!currScene.moving) {
+		for (var i=0; i<4; i++) {
+			walkingClips[i].visible = false;
+			walkingClips[i].stop();
+			player.visible = true;
+		}
+	} else {
 		return;
 	}
 	
-	currScene.moving = true;
-	
-	if (currScene.direction == up) {
+	if (dirHistory[dirHistory.length-1] == up) {
+		currScene.moving = true;
+		player.visible = false;
+		walkingClips[up].visible = true;
+		walkingClips[up].play();
+		player.texture = playerTextures[up];
+		
 		if (tiley == 3) {
 			currScene.moving = false;
 			return;
 		} else {
 			tiley--;
-			createjs.Tween.get(player).to({y: player.y - 32}, 250).call(currScene.move);
+			createjs.Tween.get(playerContainer).to({y: playerContainer.y - 32}, 250).call(function() {
+				currScene.moving = false;
+			});
 		}
+	} else if (dirHistory[dirHistory.length-1] == right) {
+		currScene.moving = true;
+		player.visible = false;
+		walkingClips[right].visible = true;
+		walkingClips[right].play();
+		player.texture = playerTextures[right];
 		
-	}
-	
-	if (currScene.direction == down) {
+		if (tilex == 66) {
+			currScene.moving = false;
+			return;
+		} else {
+			tilex++;
+			createjs.Tween.get(playerContainer).to({x: playerContainer.x + 32}, 250).call(function() {
+				currScene.moving = false;
+			});
+		}
+	} else if (dirHistory[dirHistory.length-1] == down) {
+		currScene.moving = true;
+		player.visible = false;
+		walkingClips[down].visible = true;
+		walkingClips[down].play();
+		player.texture = playerTextures[down];
+		
 		if (tiley == 66) {
 			currScene.moving = false;
 			return;
 		} else {
 			tiley++;
-			createjs.Tween.get(player).to({y: player.y + 32}, 250).call(currScene.move);
+			createjs.Tween.get(playerContainer).to({y: playerContainer.y + 32}, 250).call(function() {
+				currScene.moving = false;
+			});
 		}
-	}
-	
-	if (currScene.direction == left) {
+	} else if (dirHistory[dirHistory.length-1] == left) {
+		currScene.moving = true;
+		player.visible = false;
+		walkingClips[left].visible = true;
+		walkingClips[left].play();
+		player.texture = playerTextures[left];
+		
 		if (tilex == 3) {
 			currScene.moving = false;
 			return;
 		} else {
 			tilex--;
-			createjs.Tween.get(player).to({x: player.x - 32}, 250).call(currScene.move);
-		}
-	}
-	if (currScene.direction == right) {
-		if (tilex == 66) {
-			currScene.moving = false;
-			return;
-		} else {
-			createjs.Tween.get(player).to({x: player.x + 32}, 250).call(currScene.move);
-			tilex++;
+			createjs.Tween.get(playerContainer).to({x: playerContainer.x - 32}, 250).call(function() {
+				currScene.moving = false;
+			});
 		}
 	}
 }
 
 playGame.prototype.updateCamera = function() {
-	stage.x = -player.x*scale + renderer.width/2 - player.width/2*scale;
-	stage.y = -player.y*scale + renderer.height/2 + player.height/2*scale;
+	stage.x = -playerContainer.x*scale + renderer.width/2 - 16*scale;
+	stage.y = -playerContainer.y*scale + renderer.height/2 - 16*scale;
 }
 
 function keydownEventHandler(e) {
 	e.preventDefault();
-	if (currScene.moving) {
+	if (e.repeat) {
 		return;
 	}
 	
-	currScene.direction = stop;
-	
-	if (e.keyCode == 65) { //move left
-		currScene.direction = left;
-	} else if (e.keyCode == 68) { //move right
-		currScene.direction = right;
-	} else if (e.keyCode == 87) { //move up
-		currScene.direction = up;
-	} else if (e.keyCode == 83) { //move down
-		currScene.direction = down;
+	if (e.keyCode == 87 && dirHistory.indexOf(up) == -1) { //move up
+		dirHistory.push(up);
+	}else if (e.keyCode == 68 && dirHistory.indexOf(right) == -1) { //move right
+		dirHistory.push(right);
+	} else if (e.keyCode == 83 && dirHistory.indexOf(down) == -1) { //move down
+		dirHistory.push(down);
+	} else if (e.keyCode == 65 && dirHistory.indexOf(left) == -1) { //move left
+		dirHistory.push(left);
 	}
-	currScene.move();
 }
 
-//set direction to false when key is up
 function keyupEventHandler(e) {
-	currScene.direction = stop;
+	if (e.keyCode == 87) { //move up
+		dirHistory.splice(dirHistory.indexOf(up), 1);
+	} else if (e.keyCode == 68) { //move right
+		dirHistory.splice(dirHistory.indexOf(right), 1);
+	} else if (e.keyCode == 83) { //move down
+		dirHistory.splice(dirHistory.indexOf(down), 1);
+	} else if (e.keyCode == 65) { //move left
+		dirHistory.splice(dirHistory.indexOf(left), 1);
+	}
 }
-
-
 
 function animate() {
 	requestAnimationFrame(animate);
 	
 	currScene.updateCamera();
+	currScene.move();
 	
 	renderer.render(stage);
 }
