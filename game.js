@@ -80,6 +80,7 @@ var dirHistory = [];
 //play game
 var playGame = function() {
 	this.moving = false;
+	this.hashat = false;
 	
 	gameContainer.addChild(world);
 	playerObject = world.getObject("person");
@@ -137,17 +138,20 @@ playGame.prototype.move = function() {
 		
 		if (tiley == 3 || 
 		(tiley == 4 && ((tilex >= 52 && tilex <= 54) || tilex >= 60)) || 
-		(tiley == 5 && (tilex == 50 || tilex == 51 || tilex >= 62)) || 
+		(tiley == 5 && (tilex == 50 || tilex == 51 || tilex == 57 || tilex >= 62)) || 
 		(tiley == 6 && (tilex == 48 || tilex == 49)) || 
 		(tiley == 7 && (tilex == 47 || tilex >= 64)) || 
-		(tiley == 8 && tilex >= 65) || 
-		(tiley == 9 && tilex == 46) || 
+		(tiley == 8 && (tilex == 49 || tilex == 53 || tilex >= 65)) || 
+		(tiley == 9 && (tilex == 46 || (tilex >= 57 && tilex <= 60) || tilex == 63)) || 
 		(tiley == 10 && tilex >= 66) || 
-		(tiley == 12 && tilex >= 18 && tilex <= 23) || 
-		(tiley == 13 && (tilex == 17 || (tilex >= 24 && tilex <= 28))) || 
+		(tiley == 12 && ((tilex >= 18 && tilex <= 23) || (tilex >= 49 && tilex <= 52) || tilex == 55 || tilex == 56 || tilex == 59)) || 
+		(tiley == 13 && (tilex == 17 || (tilex >= 24 && tilex <= 28) || tilex == 63)) || 
 		(tiley == 14 && (tilex == 29 || tilex == 33 || tilex == 34)) || 
 		(tiley == 15 && tilex >= 35 && tilex <= 37) || 
-		(tiley == 17 && tilex >= 30 && tilex <= 32) || 
+		(tiley == 16 && tilex >= 55 && tilex <= 58) || 
+		(tiley == 17 && ((tilex >= 30 && tilex <= 32) || (tilex >= 49 && tilex <= 52) || tilex >= 61)) || 
+		(tiley == 19 && tilex == 59) || 
+		(tiley == 20 && tilex == 54) || 
 		(tiley == 23 && tilex >= 48 && tilex <= 50) || 
 		(tiley == 24 && (tilex <= 8 || (tilex >= 10 && tilex <= 47) || tilex >= 64)) || 
 		(tiley == 25 && (tilex == 5 || (tilex >= 13 && tilex <= 18) || (tilex >= 38 && tilex <= 43) || (tilex >= 59 && tilex <= 63))) || 
@@ -176,14 +180,15 @@ playGame.prototype.move = function() {
 		(tiley == 52 && ((tilex >= 10 && tilex <= 12) || tilex == 20 || tilex == 21 || tilex == 27 || tilex == 28 || (tilex >= 30 && tilex <= 32) || tilex == 38 || tilex == 39 || (tilex >= 56 && tilex <= 64))) || 
 		(tiley == 53 && ((tilex >= 13 && tilex <= 19) || tilex == 25 || tilex == 26 || tilex == 33 || (tilex >= 40 && tilex <= 42) || (tilex >= 53 && tilex <= 55))) || 
 		(tiley == 54 && ((tilex >= 5 && tilex <= 7) || tilex == 34 || tilex == 43 || tilex == 44 || (tilex >= 46 && tilex <= 52))) || 
-		(tiley == 55 && ((tilex >= 13 && tilex <= 16) || tilex == 24 || tilex == 35 || (tilex >= 59 && tilex <= 61))) || 
-		(tiley == 56 && (tilex == 6 || tilex == 12 || (tilex >= 17 && tilex <= 19) || tilex == 36 || (tilex >= 49 && tilex <= 52))) || 
-		(tiley == 57 && (tilex == 20 || tilex == 37 || tilex == 48 || tilex == 53 || tilex == 62)) || 
+		(tiley == 55 && ((tilex >= 13 && tilex <= 16) || tilex == 24 || tilex == 31 || tilex == 35 || (tilex >= 59 && tilex <= 61))) || 
+		(tiley == 56 && (tilex == 6 || tilex == 12 || (tilex >= 17 && tilex <= 19) || (tilex >= 26 && tilex <= 28) || tilex == 36 || (tilex >= 49 && tilex <= 52))) || 
+		(tiley == 57 && (tilex == 14 || tilex == 20 || tilex == 37 || tilex == 48 || tilex == 53 || tilex == 62)) || 
 		(tiley == 58 && (tilex <= 5 || tilex == 7 || tilex == 8 || tilex == 11 || tilex == 22 || tilex == 23 || tilex == 47 || tilex >= 66)) || 
-		(tiley == 59 && (tilex == 3 || tilex == 21 || tilex == 38 || tilex == 54 || tilex == 58)) || 
-		(tiley == 60 && (tilex == 22 || tilex == 46)) || 
-		(tiley == 61 && tilex == 10) || 
-		(tiley == 63 && (tilex == 21 || tilex == 23 || tilex == 24 || tilex == 38 || tilex == 46 || tilex == 54)) || 
+		(tiley == 59 && (tilex == 3 || tilex == 21 || (tilex >= 29 && tilex <= 31) || tilex == 34 || tilex == 38 || tilex == 51 || tilex == 54 || tilex == 58)) || 
+		(tiley == 60 && ((tilex >= 14 && tilex <= 16) || tilex == 22 || tilex == 46 || tilex == 49)) || 
+		(tiley == 61 && (tilex == 10 || tilex == 18 || tilex == 26 || tilex == 27)) || 
+		(tiley == 62 && (tilex == 30 || tilex == 33 || tilex == 34 || tilex == 50 || tilex == 60)) || 
+		(tiley == 63 && (tilex == 13 || tilex == 14 || tilex == 21 || tilex == 23 || tilex == 24 || tilex == 38 || tilex == 46 || tilex == 54)) || 
 		(tiley == 64 && ((tilex >= 18 && tilex <= 20) || (tilex >= 25 && tilex <= 37) || tilex == 47 || (tilex >= 58 && tilex <= 63))) || 
 		(tiley == 65 && ((tilex >= 10 && tilex <= 17) || (tilex >= 48 && tilex <= 53)))) {
 			currScene.moving = false;
@@ -219,9 +224,11 @@ playGame.prototype.move = function() {
 		(tilex == 9 && (tiley == 46 || tiley == 51 || (tiley >= 57 && tiley <= 60) || (tiley >= 62 && tiley <= 64))) || 
 		(tilex == 10 && (tiley == 55 || tiley == 56)) || 
 		(tilex == 11 && (tiley == 47 || tiley == 54)) || 
-		(tilex == 12 && (tiley == 24 || tiley == 52)) || 
+		(tilex == 12 && (tiley == 24 || tiley == 52 || tiley == 61 || tiley == 62)) || 
+		(tilex == 13 && (tiley == 56 || tiley == 58 || tiley == 59)) || 
 		(tilex == 14 && tiley == 48) || 
 		(tilex == 16 && (tiley == 39 || tiley == 55 || tiley == 63)) || 
+		(tilex == 17 && tiley == 60) || 
 		(tilex == 18 && (tiley == 25 || tiley == 51 || tiley >= 66)) || 
 		(tilex == 19 && ((tiley >= 34 && tiley <= 38) || tiley == 56 || tiley == 62)) || 
 		(tilex == 20 && (tiley == 18 || tiley == 26 || tiley == 33 || tiley == 50 || tiley == 57 || tiley == 58 || tiley == 60 || tiley == 61)) || 
@@ -229,13 +236,13 @@ playGame.prototype.move = function() {
 		(tilex == 22 && (tiley == 27 || tiley == 31 || tiley == 49 || (tiley >= 54 && tiley <= 57) || (tiley >= 59 && tiley <= 62))) || 
 		(tilex == 23 && (tiley == 12 || tiley == 52 || tiley == 53)) || 
 		(tilex == 24 && (tiley == 48 || tiley == 63)) || 
-		(tilex == 25 && (tiley == 22 || tiley == 51)) || 
+		(tilex == 25 && (tiley == 22 || tiley == 51 || tiley == 54 || tiley == 55 || tiley == 59 || tiley == 60)) || 
 		(tilex == 27 && tiley == 21) || 
-		(tilex == 28 && (tiley == 13 || tiley == 49 || tiley == 50)) || 
-		(tilex == 29 && ((tiley >= 14 && tiley <= 16) || (tiley >= 18 && tiley <= 20) || (tiley >= 35 && tiley <= 37) || (tiley >= 48 && tiley <= 51))) || 
-		(tilex == 30 && tiley >= 31 && tiley <= 44) || 
-		(tilex == 32 && (tiley == 49 || tiley == 52 || tiley >= 66)) || 
-		(tilex == 33 && tiley == 53) || 
+		(tilex == 28 && (tiley == 13 || tiley == 49 || tiley == 50 || tiley == 57 || tiley == 58)) || 
+		(tilex == 29 && ((tiley >= 14 && tiley <= 16) || (tiley >= 18 && tiley <= 20) || (tiley >= 35 && tiley <= 37) || (tiley >= 48 && tiley <= 51) || tiley == 61)) || 
+		(tilex == 30 && ((tiley >= 31 && tiley <= 44) || tiley == 54)) || 
+		(tilex == 32 && (tiley == 49 || tiley == 52 || tiley == 60 || tiley == 61 || tiley >= 66)) || 
+		(tilex == 33 && (tiley == 53 || tiley == 58)) || 
 		(tilex == 34 && (tiley == 14 || tiley == 45 || tiley == 54)) || 
 		(tilex == 35 && (tiley == 20 || tiley == 50 || tiley == 55)) || 
 		(tilex == 36 && (tiley == 18 || tiley == 19 || tiley == 30 || tiley == 56 || tiley == 62)) || 
@@ -247,18 +254,21 @@ playGame.prototype.move = function() {
 		(tilex == 45 && (tiley == 27 || (tiley >= 37 && tiley <= 40) || tiley == 53 || (tiley >= 57 && tiley <= 59) || tiley == 61 || tiley == 62)) || 
 		(tilex == 46 && (tiley == 35 || tiley == 36 || tiley == 56 || tiley == 63)) || 
 		(tilex == 47 && (tiley == 34 || tiley == 41 || tiley == 55 || tiley == 64)) || 
-		(tilex == 48 && tiley == 26) || 
-		(tilex == 49 && (tiley == 31 || tiley == 33 || tiley == 42 || tiley == 44)) || 
+		(tilex == 48 && (tiley == 7 || (tiley >= 9 && tiley <= 11) || (tiley >= 14 && tiley <= 16) || tiley == 26 || tiley == 59)) || 
+		(tilex == 49 && (tiley == 31 || tiley == 33 || tiley == 42 || tiley == 44 || tiley == 61)) || 
+		(tilex == 50 && (tiley == 13 || tiley == 58)) || 
 		(tilex == 51 && tiley == 52) || 
-		(tilex == 52 && (tiley ==56 || tiley == 62 || tiley == 63 || tiley >= 66)) || 
-		(tilex == 53 && ((tiley >= 23 && tiley <= 29) || (tiley >= 31 && tiley <= 41) || (tiley >= 43 && tiley <= 47) || tiley == 57 || tiley == 58 || tiley == 60 || tiley == 61)) || 
-		(tilex == 54 && tiley == 51) || 
+		(tilex == 52 && (tiley == 7 || tiley ==56 || tiley == 62 || tiley == 63 || tiley >= 66)) || 
+		(tilex == 53 && (tiley == 19 || (tiley >= 23 && tiley <= 29) || (tiley >= 31 && tiley <= 41) || (tiley >= 43 && tiley <= 47) || tiley == 57 || tiley == 58 || tiley == 60 || tiley == 61)) || 
+		(tilex == 54 && (tiley == 10 || tiley == 11 || (tiley >= 13 && tiley <= 15) || tiley == 51)) || 
 		(tilex == 55 && tiley == 22) || 
+		(tilex == 56 && (tiley == 4 || (tiley >= 6 && tiley <= 8))) || 
 		(tilex == 57 && (tiley == 43 || (tiley >= 54 && tiley <= 58) || (tiley >= 60 && tiley <= 63))) || 
-		(tilex == 59 && (tiley == 3 || tiley == 21 || (tiley >= 30 && tiley <= 33) || (tiley >= 35 && tiley <= 37))) || 
-		(tilex == 60 && (tiley == 29 || tiley == 38 || tiley == 39)) || 
+		(tilex == 58 && (tiley == 11 || tiley == 18)) || 
+		(tilex == 59 && (tiley == 3 || tiley == 21 || (tiley >= 30 && tiley <= 33) || (tiley >= 35 && tiley <= 37) || tiley == 61)) || 
+		(tilex == 60 && ((tiley >= 14 && tiley <= 16) || tiley == 29 || tiley == 38 || tiley == 39)) || 
 		(tilex == 61 && (tiley == 4 || tiley == 20 || tiley == 28 || tiley == 55 || tiley == 56 || tiley >= 66)) || 
-		(tilex == 62 && tiley >= 57 && tiley <= 62) || 
+		(tilex == 62 && (tiley == 8 || tiley == 12 || (tiley >= 57 && tiley <= 62))) || 
 		(tilex == 63 && (tiley == 5 || tiley == 6 || tiley == 19 || tiley == 50)) || 
 		(tilex == 64 && (tiley == 7 || tiley == 17 || tiley == 18)) || 
 		(tilex == 65 && (tiley == 8 || tiley == 9 || tiley == 15 || tiley == 16 || tiley == 49 || (tiley >= 54 && tiley <= 57) || tiley >= 62)) || 
@@ -278,12 +288,20 @@ playGame.prototype.move = function() {
 		walkingClips[down].play();
 		player.texture = playerTextures[down];
 		
-		if ((tiley == 11 && tilex == 46) || 
-		(tiley == 13 && tilex == 47) || 
+		if ((tiley == 3 && tilex == 57) || 
+		(tiley == 5 && tilex >= 57 && tilex <= 60) || 
+		(tiley == 6 && (tilex == 49 || tilex == 53)) || 
+		(tiley == 7 && tilex == 63) || 
+		(tiley == 8 && tilex >= 49 && tilex <= 52) || 
+		(tiley == 9 && (tilex == 55 || tilex == 56)) || 
+		(tiley == 10 && tilex == 59) || 
+		(tiley == 11 && (tilex == 46 || tilex == 63)) || 
+		(tiley == 12 && (tilex == 51 || (tilex >= 55 && tilex <= 58))) || 
+		(tiley == 13 && (tilex == 47 || (tilex >= 49 && tilex <= 52) || (tilex >= 61 && tilex <= 64))) || 
 		(tiley == 14 && tilex >= 66) || 
 		(tiley == 16 && (tilex == 48 || tilex >= 65)) || 
-		(tiley == 17 && ((tilex >= 17 && tilex <= 19) || tilex == 21 || tilex == 22 || (tilex >= 30 && tilex <= 32) || tilex == 37 || tilex == 49)) || 
-		(tiley == 18 && (tilex == 23 || tilex >= 64)) || 
+		(tiley == 17 && ((tilex >= 17 && tilex <= 19) || tilex == 21 || tilex == 22 || (tilex >= 30 && tilex <= 32) || tilex == 37 || tilex == 49 || tilex == 59)) || 
+		(tiley == 18 && (tilex == 23 || tilex == 54 || tilex >= 64)) || 
 		(tiley == 19 && (tilex == 24 || tilex == 33 || tilex == 34 || tilex == 36 || tilex == 50 || tilex >= 62)) || 
 		(tiley == 20 && (tilex == 28 || tilex == 29 || tilex == 35 || tilex >= 60)) || 
 		(tiley == 21 && (tilex == 26 || tilex == 27 || tilex >= 56)) || 
@@ -311,14 +329,14 @@ playGame.prototype.move = function() {
 		(tiley == 50 && ((tilex >= 11 && tilex <= 13) || tilex == 19 || tilex == 20 || (tilex >= 26 && tilex <= 28) || (tilex >= 30 && tilex <= 33) || tilex == 39 || tilex == 40 || tilex >= 55)) || 
 		(tiley == 51 && ((tilex >= 14 && tilex <= 18) || tilex == 24 || tilex == 25 || tilex == 34 || (tilex >= 41 && tilex <= 43) || (tilex >= 52 && tilex <= 54))) || 
 		(tiley == 52 && ((tilex >= 4 && tilex <= 8) || tilex == 35 || tilex == 44 || (tilex >= 46 && tilex <= 51))) || 
-		(tiley == 53 && ((tilex >= 12 && tilex <= 17) || tilex == 23 || tilex == 36 || (tilex >= 58 && tilex <= 62) || tilex >= 66)) || 
+		(tiley == 53 && ((tilex >= 12 && tilex <= 17) || tilex == 23 || (tilex >= 26 && tilex <= 28) || tilex == 31 || tilex == 36 || (tilex >= 58 && tilex <= 62) || tilex >= 66)) || 
 		(tiley == 54 && (tilex <= 3 || tilex == 6 || tilex == 11 || (tilex >= 18 && tilex <= 20) || tilex == 37 || (tilex >= 48 && tilex <= 53))) || 
-		(tiley == 55 && (tilex == 21 || tilex == 38 || tilex == 47 || tilex == 54 || tilex == 63)) || 
-		(tiley == 56 && (tilex <= 5 || tilex == 7 || tilex == 10 || tilex == 46)) || 
-		(tiley == 57 && tilex == 22) || 
-		(tiley == 58 && tilex == 23) || 
-		(tiley == 59 && (tilex == 21 || tilex == 22 || tilex == 38 || tilex == 54 || tilex == 58)) || 
-		(tiley == 60 && tilex == 46) || 
+		(tiley == 55 && (tilex == 14 || tilex == 21 || tilex == 38 || tilex == 47 || tilex == 54 || tilex == 63)) || 
+		(tiley == 56 && (tilex <= 5 || tilex == 7 || tilex == 10 || (tilex >= 29 && tilex <= 31) || tilex == 46)) || 
+		(tiley == 57 && ((tilex >= 14 && tilex <= 16) || tilex == 22 || tilex == 34 || tilex == 51)) || 
+		(tiley == 58 && (tilex == 23 || tilex == 26 || tilex == 27 || tilex == 49)) || 
+		(tiley == 59 && (tilex == 18 || tilex == 21 || tilex == 22 || tilex == 33 || tilex == 34 || tilex == 38 || tilex == 54 || tilex == 58)) || 
+		(tiley == 60 && (tilex == 13 || tilex == 14 || tilex == 30 || tilex == 46 || tilex == 50 || tilex == 60)) || 
 		(tiley == 61 && (tilex == 10 || tilex == 20 || tilex == 24 || tilex == 25 || tilex == 37 || tilex == 47 || tilex == 53 || tilex >= 66)) || 
 		(tiley == 62 && ((tilex >= 17 && tilex <= 19) || (tilex >= 26 && tilex <= 36) || tilex == 48 || (tilex >= 59 && tilex <= 62))) || 
 		(tiley == 63 && (tilex <= 3 || (tilex >= 11 && tilex <= 16) || (tilex >= 49 && tilex <= 52))) || 
@@ -359,9 +377,10 @@ playGame.prototype.move = function() {
 		(tilex == 12 && (tiley == 56 || tiley == 57)) || 
 		(tilex == 13 && tiley == 55) || 
 		(tilex == 14 && tiley == 51) || 
-		(tilex == 15 && tiley >= 66) || 
-		(tilex == 17 && tiley >= 13 && tiley <= 17) || 
+		(tilex == 15 && ((tiley == 56 || tiley == 61 || tiley == 62 || tiley >= 66))) || 
+		(tilex == 17 && ((tiley >= 13 && tiley <= 17) || tiley == 58 || tiley == 59)) || 
 		(tilex == 18 && (tiley == 12 || tiley == 48 || tiley == 54 || tiley == 64)) || 
+		(tilex == 19 && tiley == 60) || 
 		(tilex == 20 && (tiley == 18 || tiley == 47 || tiley == 52)) || 
 		(tilex == 21 && (tiley == 55 || tiley == 63)) || 
 		(tilex == 22 && (tiley == 46 || tiley == 51 || (tiley >= 56 && tiley <= 58) || (tiley >= 60 && tiley <= 62) || tiley >= 66)) || 
@@ -370,12 +389,14 @@ playGame.prototype.move = function() {
 		(tilex == 25 && ((tiley >= 20 && tiley <= 22) || tiley == 53 || tiley == 54)) || 
 		(tilex == 26 && (tiley == 49 || tiley == 62)) || 
 		(tilex == 27 && ((tiley >= 35 && tiley <= 37) || tiley == 52)) || 
-		(tilex == 28 && ((tiley >= 31 && tiley <= 34) || (tiley >= 38 && tiley <= 44))) || 
-		(tilex == 29 && tiley >= 48 && tiley <= 51) || 
+		(tilex == 28 && ((tiley >= 31 && tiley <= 34) || (tiley >= 38 && tiley <= 44) || tiley == 59 || tiley == 60)) || 
+		(tilex == 29 && ((tiley >= 48 && tiley <= 51) || tiley == 54 || tiley == 55)) || 
 		(tilex == 30 && (tiley == 49 || tiley == 50)) || 
+		(tilex == 31 && tiley == 61) || 
+		(tilex == 32 && (tiley == 54 || tiley == 57 || tiley == 58)) || 
 		(tilex == 33 && ((tiley >= 14 && tiley <= 16) || tiley == 18 || tiley == 19)) || 
 		(tilex == 34 && (tiley == 48 || tiley == 51)) || 
-		(tilex == 35 && (tiley == 20 || tiley == 52)) || 
+		(tilex == 35 && (tiley == 20 || tiley == 52 || tiley == 58 || tiley == 60 || tiley == 61)) || 
 		(tilex == 36 && (tiley == 27 || tiley == 53)) || 
 		(tilex == 37 && (tiley == 26 || tiley == 49 || tiley == 54)) || 
 		(tilex == 38 && (tiley == 25 || tiley == 55 || tiley == 63)) || 
@@ -388,19 +409,21 @@ playGame.prototype.move = function() {
 		(tilex == 47 && (tiley <= 8 || tiley == 12 || tiley == 13 || tiley == 31 || tiley == 44 || tiley == 58 || tiley == 59 || tiley == 61)) || 
 		(tilex == 48 && (tiley <= 6 || (tiley >= 14 && tiley <= 23) || tiley == 57 || tiley == 62)) || 
 		(tilex == 49 && (tiley == 17 || tiley == 56 || tiley == 63)) || 
-		(tilex == 50 && (tiley <= 5 || tiley == 18 || tiley == 19)) || 
-		(tilex == 51 && ((tiley >= 20 && tiley <= 22) || (tiley >= 26 && tiley <= 31) || (tiley >= 33 && tiley <= 42) || (tiley >= 44 && tiley <= 49))) || 
-		(tilex == 52 && tiley <= 4) || 
-		(tilex == 53 && tiley == 53) || 
-		(tilex == 54 && (tiley == 55 || tiley == 63 || tiley == 64)) || 
-		(tilex == 55 && (tiley <= 3 || tiley == 28 || tiley == 29 || (tiley >= 31 && tiley <= 41) || tiley == 43 || (tiley >= 56 && tiley <= 58) || (tiley >= 60 && tiley <= 62))) || 
+		(tilex == 50 && (tiley <= 5 || tiley == 7 || tiley == 18 || tiley == 19 || tiley == 59)) || 
+		(tilex == 51 && ((tiley >= 20 && tiley <= 22) || (tiley >= 26 && tiley <= 31) || (tiley >= 33 && tiley <= 42) || (tiley >= 44 && tiley <= 49) || tiley == 61)) || 
+		(tilex == 52 && (tiley <= 4 || tiley == 13 || tiley == 58)) || 
+		(tilex == 53 && ((tiley >= 9 && tiley <= 11) || (tiley >= 14 && tiley <= 16) || tiley == 53)) || 
+		(tilex == 54 && (tiley == 7 || tiley == 55 || tiley == 63 || tiley == 64)) || 
+		(tilex == 55 && (tiley <= 3 || tiley == 19 || tiley == 28 || tiley == 29 || (tiley >= 31 && tiley <= 41) || tiley == 43 || (tiley >= 56 && tiley <= 58) || (tiley >= 60 && tiley <= 62))) || 
 		(tilex == 56 && (tiley == 27 || tiley == 52)) || 
-		(tilex == 57 && (tiley == 26 || (tiley >= 33 && tiley <= 40) || tiley >= 66)) || 
-		(tilex == 58 && tiley == 39) || 
-		(tilex == 59 && (tiley == 25 || (tiley >= 55 && tiley <= 58) || (tiley >= 60 && tiley <= 62))) || 
+		(tilex == 57 && (tiley == 10 || tiley == 11 || tiley == 26 || (tiley >= 33 && tiley <= 40) || tiley >= 66)) || 
+		(tilex == 58 && (tiley == 4 || tiley == 39)) || 
+		(tilex == 59 && ((tiley >= 13 && tiley <= 15) || tiley == 25 || (tiley >= 55 && tiley <= 58) || (tiley >= 60 && tiley <= 62))) || 
+		(tilex == 60 && (tiley == 11 || tiley == 18)) || 
+		(tilex == 61 && ((tiley >= 6 && tiley <= 8) || tiley == 61)) || 
 		(tilex == 63 && (tiley == 33 || tiley == 47 || tiley == 54 || tiley == 55)) || 
-		(tilex == 64 && (tiley == 24 || tiley == 32 || tiley == 35 || tiley == 36 || (tiley >= 56 && tiley <= 63))) || 
-		(tilex == 65 && (tiley == 31 || tiley == 46 || tiley == 51))) {
+		(tilex == 64 && (tiley == 8 || tiley == 12 || tiley == 24 || tiley == 32 || tiley == 35 || tiley == 36 || (tiley >= 56 && tiley <= 63))) || 
+		(tilex == 65 && ((tiley >= 14 && tiley <= 16) || tiley == 31 || tiley == 46 || tiley == 51))) {
 			currScene.moving = false;
 			return;
 		} else {
