@@ -148,7 +148,7 @@ playGame.prototype.move = function() {
 		(tiley == 13 && (tilex == 17 || (tilex >= 24 && tilex <= 28) || tilex == 63)) || 
 		(tiley == 14 && (tilex == 29 || tilex == 33 || tilex == 34)) || 
 		(tiley == 15 && tilex >= 35 && tilex <= 37) || 
-		(tiley == 16 && tilex >= 55 && tilex <= 58) || 
+		(tiley == 16 && (tilex == 25 || (tilex >= 55 && tilex <= 58))) || 
 		(tiley == 17 && ((tilex >= 30 && tilex <= 32) || (tilex >= 49 && tilex <= 52) || tilex >= 61)) || 
 		(tiley == 19 && tilex == 59) || 
 		(tiley == 20 && tilex == 54) || 
@@ -158,13 +158,14 @@ playGame.prototype.move = function() {
 		(tiley == 26 && (tilex == 4 || tilex == 19 || tilex == 20 || tilex == 37 || tilex == 57 || tilex == 58)) || 
 		(tiley == 27 && (tilex == 3 || tilex == 21 || tilex == 22 || tilex == 36 || tilex == 56)) || 
 		(tiley == 28 && ((tilex >= 23 && tilex <= 35) || tilex == 55)) || 
-		(tiley == 30 && tilex == 54) || 
+		(tiley == 30 && ((tilex >= 5 && tilex <= 8) || tilex == 54)) || 
 		(tiley == 31 && ((tilex >= 47 && tilex <= 49) || tilex >= 65)) || 
-		(tiley == 32 && (tilex == 46 || tilex == 50 || tilex == 64)) || 
+		(tiley == 32 && (tilex <= 5 || (tilex >= 7 && tilex <= 9) || (tilex >= 12 && tilex <= 15) || tilex == 46 || tilex == 50 || tilex == 64)) || 
 		(tiley == 33 && (tilex == 45 || tilex == 63)) || 
 		(tiley == 34 && (tilex == 44 || (tilex >= 60 && tilex <= 62))) || 
 		(tiley == 35 && tilex == 27) || 
 		(tiley == 36 && tilex == 43) || 
+		(tiley == 37 && ((tilex >= 7 && tilex <= 10) || (tilex >= 14 && tilex <= 17))) || 
 		(tiley == 38 && (tilex == 30 || tilex == 60)) || 
 		(tiley == 40 && (tilex == 57 || tilex >= 61)) || 
 		(tiley == 41 && (tilex == 46 || tilex == 47 || tilex == 55 || tilex == 56)) || 
@@ -203,6 +204,10 @@ playGame.prototype.move = function() {
 			tilex = 20;
 			tiley = 18;
 			currScene.moving = false;
+		} else if (tiley == 30 && tilex == 4) {
+			playerContainer.y = playerContainer.y - 800;
+			tiley = 5;
+			currScene.moving = false;
 		} else {
 			tiley--;
 			createjs.Tween.get(playerContainer).to({y: playerContainer.y - 32}, 250).call(function() {
@@ -218,14 +223,14 @@ playGame.prototype.move = function() {
 		
 		if ((tilex == 3 && (tiley == 53 || tiley == 54)) || 
 		(tilex == 5 && tiley == 55) || 
-		(tilex == 6 && tiley == 57) || 
+		(tilex == 6 && (tiley == 31 || tiley == 35 || tiley == 36 || tiley == 57)) || 
 		(tilex == 7 && (tiley == 50 || (tiley >= 54 && tiley <= 56))) || 
-		(tilex == 8 && tiley >= 66) || 
-		(tilex == 9 && (tiley == 46 || tiley == 51 || (tiley >= 57 && tiley <= 60) || (tiley >= 62 && tiley <= 64))) || 
+		(tilex == 8 && (tiley == 30 || tiley >= 66)) || 
+		(tilex == 9 && (tiley <= 5 || tiley == 46 || tiley == 51 || (tiley >= 57 && tiley <= 60) || (tiley >= 62 && tiley <= 64))) || 
 		(tilex == 10 && (tiley == 55 || tiley == 56)) || 
-		(tilex == 11 && (tiley == 47 || tiley == 54)) || 
+		(tilex == 11 && (tiley == 30 || tiley == 31 || tiley == 47 || tiley == 54)) || 
 		(tilex == 12 && (tiley == 24 || tiley == 52 || tiley == 61 || tiley == 62)) || 
-		(tilex == 13 && (tiley == 56 || tiley == 58 || tiley == 59)) || 
+		(tilex == 13 && (tiley == 35 || tiley == 36 || tiley == 56 || tiley == 58 || tiley == 59)) || 
 		(tilex == 14 && tiley == 48) || 
 		(tilex == 16 && (tiley == 39 || tiley == 55 || tiley == 63)) || 
 		(tilex == 17 && tiley == 60) || 
@@ -235,7 +240,7 @@ playGame.prototype.move = function() {
 		(tilex == 21 && tiley == 32) || 
 		(tilex == 22 && (tiley == 27 || tiley == 31 || tiley == 49 || (tiley >= 54 && tiley <= 57) || (tiley >= 59 && tiley <= 62))) || 
 		(tilex == 23 && (tiley == 12 || tiley == 52 || tiley == 53)) || 
-		(tilex == 24 && (tiley == 48 || tiley == 63)) || 
+		(tilex == 24 && (tiley == 15 || tiley == 48 || tiley == 63)) || 
 		(tilex == 25 && (tiley == 22 || tiley == 51 || tiley == 54 || tiley == 55 || tiley == 59 || tiley == 60)) || 
 		(tilex == 27 && tiley == 21) || 
 		(tilex == 28 && (tiley == 13 || tiley == 49 || tiley == 50 || tiley == 57 || tiley == 58)) || 
@@ -289,7 +294,7 @@ playGame.prototype.move = function() {
 		player.texture = playerTextures[down];
 		
 		if ((tiley == 3 && tilex == 57) || 
-		(tiley == 5 && tilex >= 57 && tilex <= 60) || 
+		(tiley == 5 && (tilex <= 3 || (tilex >= 5 && tilex <= 9) || (tilex >= 57 && tilex <= 60))) || 
 		(tiley == 6 && (tilex == 49 || tilex == 53)) || 
 		(tiley == 7 && tilex == 63) || 
 		(tiley == 8 && tilex >= 49 && tilex <= 52) || 
@@ -298,7 +303,7 @@ playGame.prototype.move = function() {
 		(tiley == 11 && (tilex == 46 || tilex == 63)) || 
 		(tiley == 12 && (tilex == 51 || (tilex >= 55 && tilex <= 58))) || 
 		(tiley == 13 && (tilex == 47 || (tilex >= 49 && tilex <= 52) || (tilex >= 61 && tilex <= 64))) || 
-		(tiley == 14 && tilex >= 66) || 
+		(tiley == 14 && (tilex == 25 || tilex >= 66))|| 
 		(tiley == 16 && (tilex == 48 || tilex >= 65)) || 
 		(tiley == 17 && ((tilex >= 17 && tilex <= 19) || tilex == 21 || tilex == 22 || (tilex >= 30 && tilex <= 32) || tilex == 37 || tilex == 49 || tilex == 59)) || 
 		(tiley == 18 && (tilex == 23 || tilex == 54 || tilex >= 64)) || 
@@ -308,14 +313,14 @@ playGame.prototype.move = function() {
 		(tiley == 22 && (tilex == 25 || tilex >= 54)) || 
 		(tiley == 25 && (tilex == 49 || tilex == 50)) || 
 		(tiley == 26 && tilex >= 46 && tilex <= 48) || 
-		(tiley == 27 && ((tilex >= 38 && tilex <= 45) || tilex >= 62)) || 
+		(tiley == 27 && (tilex <= 9 || (tilex >= 38 && tilex <= 45) || tilex >= 62)) || 
 		(tiley == 28 && tilex >= 61) || 
-		(tiley == 29 && (tilex == 37 || tilex >= 60)) || 
-		(tiley == 30 && ((tilex >= 23 && tilex <= 27) || (tilex >= 31 && tilex <= 36) || tilex == 54)) || 
+		(tiley == 29 && ((tilex >= 12 && tilex <= 15) || tilex == 37 || tilex >= 60)) || 
+		(tiley == 30 && (tilex <= 5 || tilex == 7 || tilex == 8 || (tilex >= 23 && tilex <= 27) || (tilex >= 31 && tilex <= 36) || tilex == 54)) || 
 		(tiley == 31 && tilex == 22) || 
 		(tiley == 32 && (tilex == 3 || tilex == 21 || tilex == 50 || tilex == 55 || tilex == 56)) || 
 		(tiley == 33 && (tilex == 20 || tilex == 48 || tilex == 49)) || 
-		(tiley == 34 && (tilex == 30 || tilex == 47 || (tilex >= 60 && tilex <= 63))) || 
+		(tiley == 34 && ((tilex >= 7 && tilex <= 10) || (tilex >= 14 && tilex <= 17) || tilex == 30 || tilex == 47 || (tilex >= 60 && tilex <= 63))) || 
 		(tiley == 36 && (tilex <= 4 || tilex == 46 || tilex >= 64)) || 
 		(tiley == 37 && (tilex <= 5 || tilex == 27)) || 
 		(tiley == 38 && (tilex <= 6 || (tilex >= 17 && tilex <= 19) || tilex == 57)) || 
@@ -354,6 +359,10 @@ playGame.prototype.move = function() {
 			tilex = 9;
 			tiley = 24;
 			currScene.moving = false;
+		} else if (tiley == 5 && tilex == 4) {
+			playerContainer.y = playerContainer.y + 800;
+			tiley = 30;
+			currScene.moving = false;
 		} else {
 			tiley++;
 			createjs.Tween.get(playerContainer).to({y: playerContainer.y + 32}, 250).call(function() {
@@ -368,18 +377,20 @@ playGame.prototype.move = function() {
 		player.texture = playerTextures[left];
 		
 		if (tilex == 3 || 
-		(tilex == 4 && (tiley == 26 || (tiley >= 33 && tiley <= 36) || tiley == 58 || tiley >= 64)) || 
+		(tilex == 4 && (tiley == 26 || tiley == 30 || (tiley >= 33 && tiley <= 36) || tiley == 58 || tiley >= 64)) || 
 		(tilex == 5 && (tiley == 25 || tiley == 37 || (tiley >= 54 && tiley <= 56))) || 
-		(tilex == 6 && (tiley == 24 || tiley == 38 || tiley == 57)) || 
+		(tilex == 6 && (tiley == 24 || tiley == 31 || tiley == 38 || tiley == 57)) || 
 		(tilex == 7 && (tiley == 39 || tiley == 55)) || 
 		(tilex == 9 && (tiley == 49 || (tiley >= 53 && tiley <= 57))) || 
-		(tilex == 11 && (tiley == 50 || (tiley >= 58 && tiley <= 60) || tiley == 62 || tiley == 63)) || 
+		(tilex == 10 && tiley >= 28 && tiley <= 31) || 
+		(tilex == 11 && (tiley == 35 || tiley == 36 || tiley == 50 || (tiley >= 58 && tiley <= 60) || tiley == 62 || tiley == 63)) || 
 		(tilex == 12 && (tiley == 56 || tiley == 57)) || 
 		(tilex == 13 && tiley == 55) || 
 		(tilex == 14 && tiley == 51) || 
 		(tilex == 15 && ((tiley == 56 || tiley == 61 || tiley == 62 || tiley >= 66))) || 
+		(tilex == 16 && (tiley == 30 || tiley == 31)) || 
 		(tilex == 17 && ((tiley >= 13 && tiley <= 17) || tiley == 58 || tiley == 59)) || 
-		(tilex == 18 && (tiley == 12 || tiley == 48 || tiley == 54 || tiley == 64)) || 
+		(tilex == 18 && (tiley == 12 || tiley == 35 || tiley == 36 || tiley == 48 || tiley == 54 || tiley == 64)) || 
 		(tilex == 19 && tiley == 60) || 
 		(tilex == 20 && (tiley == 18 || tiley == 47 || tiley == 52)) || 
 		(tilex == 21 && (tiley == 55 || tiley == 63)) || 
@@ -387,7 +398,7 @@ playGame.prototype.move = function() {
 		(tilex == 23 && tiley == 18) || 
 		(tilex == 24 && (tiley == 19 || tiley == 45 || tiley == 50 || (tiley >= 55 && tiley <= 57) || (tiley >= 59 && tiley <= 61))) || 
 		(tilex == 25 && ((tiley >= 20 && tiley <= 22) || tiley == 53 || tiley == 54)) || 
-		(tilex == 26 && (tiley == 49 || tiley == 62)) || 
+		(tilex == 26 && (tiley == 15 || tiley == 49 || tiley == 62)) || 
 		(tilex == 27 && ((tiley >= 35 && tiley <= 37) || tiley == 52)) || 
 		(tilex == 28 && ((tiley >= 31 && tiley <= 34) || (tiley >= 38 && tiley <= 44) || tiley == 59 || tiley == 60)) || 
 		(tilex == 29 && ((tiley >= 48 && tiley <= 51) || tiley == 54 || tiley == 55)) || 
