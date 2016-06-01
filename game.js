@@ -9,6 +9,7 @@ stage.scale.x = scale;
 stage.scale.y = scale;
 
 var gameContainer = new PIXI.Container();
+var objectContainer = new PIXI.Container();
 var menuContainer = new PIXI.Container();
 var endContainer = new PIXI.Container();
 var instructionsContainer = new PIXI.Container();
@@ -28,23 +29,48 @@ var music;
 var currScene;
 var player;
 var world;
+
 var person;
+var boat;
+var axe;
+var pick;
+var shovel;
+var hat;
+var buildingWindow;
+var rock;
+var cavegem;
+var forestgem;
+var islandgem;
+
 var playerObject;
+var boatObject;
+var axeObject;
+var pickObject;
+var shovelObject;
+var hatObject;
+var buildingWindowObject;
+var rockObject;
+var cavegemObject;
+var forestgemObject;
+var islandgemObject;
 
 var playerContainer = new PIXI.Container();
 var playerTextures;
 var playerTexturesNoHat;
 var playerTexturesHat;
+var playerTexturesBoat;
 var walkingClips;
 var walkingClipsNoHat;
 var walkingClipsHat;
 
+var boatTextures;
 	//.add("music.mp3")
 //load stuff 
 PIXI.loader
 	.add('map', "assets/worldmap.json")
 	.add("assets/tileset.png")
 	.add("assets/playermovement.json")
+	.add("assets/worldobjects.json")
 	.load(ready);
 	
 function ready() {
@@ -53,7 +79,19 @@ function ready() {
 	
 	playerTexturesNoHat = [PIXI.Texture.fromFrame("walkingup1.png"), PIXI.Texture.fromFrame("walkingright1.png"), PIXI.Texture.fromFrame("walkingdown1.png"), PIXI.Texture.fromFrame("walkingleft1.png")];
 	playerTexturesHat = [PIXI.Texture.fromFrame("walkinguphat1.png"), PIXI.Texture.fromFrame("walkingrighthat1.png"), PIXI.Texture.fromFrame("walkingdownhat1.png"), PIXI.Texture.fromFrame("walkinglefthat1.png")];
+	playerTexturesBoat = [PIXI.Texture.fromFrame("boatride4.png"), PIXI.Texture.fromFrame("boatride3.png"), PIXI.Texture.fromFrame("boatride1.png"), PIXI.Texture.fromFrame("boatride2.png")];
 	playerTextures = playerTexturesNoHat;
+	
+	boatTextures = [PIXI.Texture.fromFrame("boatalone4.png"), PIXI.Texture.fromFrame("boatalone3.png"), PIXI.Texture.fromFrame("boatalone1.png"), PIXI.Texture.fromFrame("boatalone2.png")];
+	axe = new PIXI.Sprite(PIXI.Texture.fromFrame("axe.png"));
+	pick = new PIXI.Sprite(PIXI.Texture.fromFrame("pick.png"));
+	shovel = new PIXI.Sprite(PIXI.Texture.fromFrame("shovel.png"));
+	hat = new PIXI.Sprite(PIXI.Texture.fromFrame("hat.png"));
+	buildingWindow = new PIXI.Sprite(PIXI.Texture.fromFrame("window.png"));
+	rock = new PIXI.Sprite(PIXI.Texture.fromFrame("rock1.png"));
+	cavegem = new PIXI.Sprite(PIXI.Texture.fromFrame("digx1.png"));
+	forestgem = new PIXI.Sprite(PIXI.Texture.fromFrame("treefalling1.png"));
+	islandgem = new PIXI.Sprite(PIXI.Texture.fromFrame("digx1.png"));
 	
 	walkingClipsNoHat = [new PIXI.extras.MovieClip.fromFrames(["walkingup1.png", "walkingup2.png", "walkingup3.png", "walkingup4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingright1.png", "walkingright2.png", "walkingright3.png", "walkingright4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingdown1.png", "walkingdown2.png", "walkingdown3.png", "walkingdown4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingleft1.png", "walkingleft2.png", "walkingleft3.png", "walkingleft4.png"])];
 	walkingClipsHat = [new PIXI.extras.MovieClip.fromFrames(["walkinguphat1.png", "walkinguphat2.png", "walkinguphat3.png", "walkinguphat4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingrighthat1.png", "walkingrighthat2.png", "walkingrighthat3.png", "walkingrighthat4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingdownhat1.png", "walkingdownhat2.png", "walkingdownhat3.png", "walkingdownhat4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkinglefthat1.png", "walkinglefthat2.png", "walkinglefthat3.png", "walkinglefthat4.png"])];
@@ -74,17 +112,92 @@ var left = 3;
 
 var tilex;
 var tiley;
+var boatx;
+var boaty;
 
 var dirHistory = [];
 
 //play game
 var playGame = function() {
+	this.follow = true;
 	this.moving = false;
 	this.hashat = false;
+	this.inboat = false;
 	
 	gameContainer.addChild(world);
 	playerObject = world.getObject("person");
+	boatObject = world.getObject("boat");
+	axeObject = world.getObject("axe");
+	pickObject = world.getObject("pick");
+	shovelObject = world.getObject("shovel");
+	hatObject = world.getObject("hat");
+	windowObject = world.getObject("window");
+	rockObject = world.getObject("rock");
+	cavegemObject = world.getObject("cavegem");
+	forestgemObject = world.getObject("forestgem");
+	islandgemObject = world.getObject("islandgem");
 	
+	gameContainer.addChild(objectContainer);
+	boat = new PIXI.Sprite(boatTextures[left]);
+	boat.x = boatObject.x;
+	boat.y = boatObject.y;
+	boat.anchor.x = 0;
+	boat.anchor.y = 1.0;
+	objectContainer.addChild(boat);
+	
+	axe.x = axeObject.x;
+	axe.y = axeObject.y;
+	axe.anchor.x = 0;
+	axe.anchor.y = 1.0;
+	objectContainer.addChild(axe);
+	
+	pick.x = pickObject.x;
+	pick.y = pickObject.y;
+	pick.anchor.x = 0;
+	pick.anchor.y = 1.0;
+	objectContainer.addChild(pick);
+	
+	shovel.x = shovelObject.x;
+	shovel.y = shovelObject.y;
+	shovel.anchor.x = 0;
+	shovel.anchor.y = 1.0;
+	objectContainer.addChild(shovel);
+	
+	hat.x = hatObject.x;
+	hat.y = hatObject.y;
+	hat.anchor.x = 0;
+	hat.anchor.y = 1.0;
+	objectContainer.addChild(hat);
+	
+	buildingWindow.x = windowObject.x;
+	buildingWindow.y = windowObject.y;
+	buildingWindow.anchor.x = 0;
+	buildingWindow.anchor.y = 1.0;
+	objectContainer.addChild(buildingWindow);
+	
+	rock.x = rockObject.x;
+	rock.y = rockObject.y;
+	rock.anchor.x = 0;
+	rock.anchor.y = 1.0;
+	objectContainer.addChild(rock);
+	
+	cavegem.x = cavegemObject.x;
+	cavegem.y = cavegemObject.y;
+	cavegem.anchor.x = 0;
+	cavegem.anchor.y = 1.0;
+	objectContainer.addChild(cavegem);
+	
+	forestgem.x = forestgemObject.x;
+	forestgem.y = forestgemObject.y;
+	forestgem.anchor.x = 0;
+	forestgem.anchor.y = 1.0;
+	objectContainer.addChild(forestgem);
+	
+	islandgem.x = islandgemObject.x;
+	islandgem.y = islandgemObject.y;
+	islandgem.anchor.x = 0;
+	islandgem.anchor.y = 1.0;
+	objectContainer.addChild(islandgem);
 	
 	playerContainer.width = 32;
 	playerContainer.height = 32;
@@ -94,6 +207,8 @@ var playGame = function() {
 	
 	tilex = 52;
 	tiley = 25;
+	boatx = 9;
+	boaty = 61;
 	
 	player = new PIXI.Sprite(playerTextures[down]);
 	player.anchor.x = 0;
@@ -131,9 +246,11 @@ playGame.prototype.move = function() {
 	
 	if (dirHistory[dirHistory.length-1] == up) {
 		currScene.moving = true;
-		player.visible = false;
-		walkingClips[up].visible = true;
-		walkingClips[up].play();
+		if (!currScene.inboat) {
+			player.visible = false;
+			walkingClips[up].visible = true;
+			walkingClips[up].play();
+		}
 		player.texture = playerTextures[up];
 		
 		if (tiley == 3 || 
@@ -147,8 +264,8 @@ playGame.prototype.move = function() {
 		(tiley == 12 && ((tilex >= 18 && tilex <= 23) || (tilex >= 49 && tilex <= 52) || tilex == 55 || tilex == 56 || tilex == 59)) || 
 		(tiley == 13 && (tilex == 17 || (tilex >= 24 && tilex <= 28) || tilex == 63)) || 
 		(tiley == 14 && (tilex == 29 || tilex == 33 || tilex == 34)) || 
-		(tiley == 15 && tilex >= 35 && tilex <= 37) || 
-		(tiley == 16 && (tilex == 25 || (tilex >= 55 && tilex <= 58))) || 
+		(tiley == 15 && ((tilex >= 8 && tilex <= 10) || (tilex >= 35 && tilex <= 37))) || 
+		(tiley == 16 && (tilex == 7 || tilex == 11 || tilex == 25 || (tilex >= 55 && tilex <= 58))) || 
 		(tiley == 17 && ((tilex >= 30 && tilex <= 32) || (tilex >= 49 && tilex <= 52) || tilex >= 61)) || 
 		(tiley == 19 && tilex == 59) || 
 		(tiley == 20 && tilex == 54) || 
@@ -185,40 +302,66 @@ playGame.prototype.move = function() {
 		(tiley == 56 && (tilex == 6 || tilex == 12 || (tilex >= 17 && tilex <= 19) || (tilex >= 26 && tilex <= 28) || tilex == 36 || (tilex >= 49 && tilex <= 52))) || 
 		(tiley == 57 && (tilex == 14 || tilex == 20 || tilex == 37 || tilex == 48 || tilex == 53 || tilex == 62)) || 
 		(tiley == 58 && (tilex <= 5 || tilex == 7 || tilex == 8 || tilex == 11 || tilex == 22 || tilex == 23 || tilex == 47 || tilex >= 66)) || 
-		(tiley == 59 && (tilex == 3 || tilex == 21 || (tilex >= 29 && tilex <= 31) || tilex == 34 || tilex == 38 || tilex == 51 || tilex == 54 || tilex == 58)) || 
+		(tiley == 59 && (tilex == 3 || tilex == 21 || (tilex >= 29 && tilex <= 31) || tilex == 34 || tilex == 38 || tilex == 51 || tilex == 58)) || 
 		(tiley == 60 && ((tilex >= 14 && tilex <= 16) || tilex == 22 || tilex == 46 || tilex == 49)) || 
 		(tiley == 61 && (tilex == 10 || tilex == 18 || tilex == 26 || tilex == 27)) || 
-		(tiley == 62 && (tilex == 30 || tilex == 33 || tilex == 34 || tilex == 50 || tilex == 60)) || 
+		(tiley == 62 && (tilex == 30 || tilex == 33 || tilex == 34 || tilex == 50 || tilex == 61)) || 
 		(tiley == 63 && (tilex == 13 || tilex == 14 || tilex == 21 || tilex == 23 || tilex == 24 || tilex == 38 || tilex == 46 || tilex == 54)) || 
 		(tiley == 64 && ((tilex >= 18 && tilex <= 20) || (tilex >= 25 && tilex <= 37) || tilex == 47 || (tilex >= 58 && tilex <= 63))) || 
 		(tiley == 65 && ((tilex >= 10 && tilex <= 17) || (tilex >= 48 && tilex <= 53)))) {
 			currScene.moving = false;
 			return;
-		} else if (tiley == 24 && tilex == 9){
-			playerContainer.x = playerContainer.x + 352;
-			playerContainer.y = playerContainer.y - 192;
-			walkingClips[up].visible = false;
-			walkingClips[up].stop();
-			playerTextures = playerTexturesHat;
-			walkingClips = walkingClipsHat;
-			tilex = 20;
-			tiley = 18;
-			currScene.moving = false;
+		} else if (tiley == 24 && tilex == 9) {
+			if (currScene.hashat) {
+				playerContainer.x = playerContainer.x + 352;
+				playerContainer.y = playerContainer.y - 192;
+				walkingClips[up].visible = false;
+				walkingClips[up].stop();
+				playerTextures = playerTexturesHat;
+				walkingClips = walkingClipsHat;
+				tilex = 20;
+				tiley = 18;
+				currScene.moving = false;
+			} else {
+				playerContainer.y = playerContainer.y - 224;
+				tiley = 18;
+				currScene.updateCamera();
+				playerContainer.y = playerContainer.y + 32;
+				currScene.follow = false;
+				currScene.moving = false;
+			}
+			return;
 		} else if (tiley == 30 && tilex == 4) {
 			playerContainer.y = playerContainer.y - 800;
 			tiley = 5;
 			currScene.moving = false;
-		} else {
-			tiley--;
-			createjs.Tween.get(playerContainer).to({y: playerContainer.y - 32}, 250).call(function() {
-				currScene.moving = false;
-			});
+			return;
+		} else if ((tiley == 54 && tilex == 45) || (tiley == 58 && tilex == 6)) {
+			playerTextures = playerTexturesNoHat;
+			currScene.inboat = false;
+			boat.texture = boatTextures[up];
+			player.texture = playerTextures[up];
+			player.visible = false;
+			boatx = tilex;
+			boaty = tiley;
+			boat.x = playerContainer.x;
+			boat.y = playerContainer.y+32;
+			boat.visible = true;
+			walkingClips[up].visible = true;
+			walkingClips[up].play();
 		}
+		
+		tiley--;
+		createjs.Tween.get(playerContainer).to({y: playerContainer.y - 32}, 250).call(function() {
+			currScene.moving = false;
+		});
 	} else if (dirHistory[dirHistory.length-1] == right) {
 		currScene.moving = true;
-		player.visible = false;
-		walkingClips[right].visible = true;
-		walkingClips[right].play();
+		if (!currScene.inboat) {
+			player.visible = false;
+			walkingClips[right].visible = true;
+			walkingClips[right].play();
+		}
 		player.texture = playerTextures[right];
 		
 		if ((tilex == 3 && (tiley == 53 || tiley == 54)) || 
@@ -226,9 +369,9 @@ playGame.prototype.move = function() {
 		(tilex == 6 && (tiley == 31 || tiley == 35 || tiley == 36 || tiley == 57)) || 
 		(tilex == 7 && (tiley == 50 || (tiley >= 54 && tiley <= 56))) || 
 		(tilex == 8 && (tiley == 30 || tiley >= 66)) || 
-		(tilex == 9 && (tiley <= 5 || tiley == 46 || tiley == 51 || (tiley >= 57 && tiley <= 60) || (tiley >= 62 && tiley <= 64))) || 
-		(tilex == 10 && (tiley == 55 || tiley == 56)) || 
-		(tilex == 11 && (tiley == 30 || tiley == 31 || tiley == 47 || tiley == 54)) || 
+		(tilex == 9 && (tiley <= 5 || tiley == 18 || tiley == 46 || tiley == 51 || (tiley >= 57 && tiley <= 60) || (tiley >= 62 && tiley <= 64))) || 
+		(tilex == 10 && (tiley == 15 || tiley == 55 || tiley == 56)) || 
+		(tilex == 11 && (tiley == 16 || tiley == 17 || tiley == 30 || tiley == 31 || tiley == 47 || tiley == 54)) || 
 		(tilex == 12 && (tiley == 24 || tiley == 52 || tiley == 61 || tiley == 62)) || 
 		(tilex == 13 && (tiley == 35 || tiley == 36 || tiley == 56 || tiley == 58 || tiley == 59)) || 
 		(tilex == 14 && tiley == 48) || 
@@ -252,6 +395,7 @@ playGame.prototype.move = function() {
 		(tilex == 35 && (tiley == 20 || tiley == 50 || tiley == 55)) || 
 		(tilex == 36 && (tiley == 18 || tiley == 19 || tiley == 30 || tiley == 56 || tiley == 62)) || 
 		(tilex == 37 && ((tiley >= 15 && tiley <= 17) || tiley == 28 || tiley == 29 || tiley == 46 || tiley == 51 || tiley == 57 || tiley == 58 || tiley == 60 || tiley ==61)) || 
+		(tilex == 38 && (tiley == 59 && (tilex != boatx-1 || tiley != boaty))) || 
 		(tilex == 39 && (tiley == 47 || tiley == 52)) || 
 		(tilex == 41 && tiley == 48) || 
 		(tilex == 42 && tiley == 53) || 
@@ -264,14 +408,14 @@ playGame.prototype.move = function() {
 		(tilex == 50 && (tiley == 13 || tiley == 58)) || 
 		(tilex == 51 && tiley == 52) || 
 		(tilex == 52 && (tiley == 7 || tiley ==56 || tiley == 62 || tiley == 63 || tiley >= 66)) || 
-		(tilex == 53 && (tiley == 19 || (tiley >= 23 && tiley <= 29) || (tiley >= 31 && tiley <= 41) || (tiley >= 43 && tiley <= 47) || tiley == 57 || tiley == 58 || tiley == 60 || tiley == 61)) || 
+		(tilex == 53 && (tiley == 19 || (tiley >= 23 && tiley <= 29) || (tiley >= 31 && tiley <= 41) || (tiley >= 43 && tiley <= 47) || (tiley >= 57 && tiley <= 61))) || 
 		(tilex == 54 && (tiley == 10 || tiley == 11 || (tiley >= 13 && tiley <= 15) || tiley == 51)) || 
 		(tilex == 55 && tiley == 22) || 
 		(tilex == 56 && (tiley == 4 || (tiley >= 6 && tiley <= 8))) || 
 		(tilex == 57 && (tiley == 43 || (tiley >= 54 && tiley <= 58) || (tiley >= 60 && tiley <= 63))) || 
 		(tilex == 58 && (tiley == 11 || tiley == 18)) || 
-		(tilex == 59 && (tiley == 3 || tiley == 21 || (tiley >= 30 && tiley <= 33) || (tiley >= 35 && tiley <= 37) || tiley == 61)) || 
-		(tilex == 60 && ((tiley >= 14 && tiley <= 16) || tiley == 29 || tiley == 38 || tiley == 39)) || 
+		(tilex == 59 && (tiley == 3 || tiley == 21 || (tiley >= 30 && tiley <= 33) || (tiley >= 35 && tiley <= 37))) || 
+		(tilex == 60 && ((tiley >= 14 && tiley <= 16) || tiley == 29 || tiley == 38 || tiley == 39 || tiley == 61)) || 
 		(tilex == 61 && (tiley == 4 || tiley == 20 || tiley == 28 || tiley == 55 || tiley == 56 || tiley >= 66)) || 
 		(tilex == 62 && (tiley == 8 || tiley == 12 || (tiley >= 57 && tiley <= 62))) || 
 		(tilex == 63 && (tiley == 5 || tiley == 6 || tiley == 19 || tiley == 50)) || 
@@ -280,17 +424,42 @@ playGame.prototype.move = function() {
 		tilex == 66) {
 			currScene.moving = false;
 			return;
-		} else {
-			tilex++;
-			createjs.Tween.get(playerContainer).to({x: playerContainer.x + 32}, 250).call(function() {
-				currScene.moving = false;
-			});
+		} else if ((tilex == 9 && tiley == 61) || (tilex == 45 && tiley == 60) || (tilex == 57 && tiley == 59)) {
+			playerTextures = playerTexturesNoHat;
+			currScene.inboat = false;
+			boat.texture = boatTextures[right];
+			player.texture = playerTextures[right];
+			player.visible = false;
+			boatx = tilex;
+			boaty = tiley;
+			boat.x = playerContainer.x;
+			boat.y = playerContainer.y+32;
+			boat.visible = true;
+			walkingClips[right].visible = true;
+			walkingClips[right].play();
 		}
+		
+		tilex++;
+		createjs.Tween.get(playerContainer).to({x: playerContainer.x + 32}, 250).call(function() {
+			if (tilex == boatx && tiley == boaty && !currScene.inboat) {
+				walkingClips[right].visible = false;
+				walkingClips[right].stop();
+				playerTextures = playerTexturesBoat;
+				player.texture = playerTextures[right];
+				player.visible = true;
+				boat.visible = false;
+				currScene.inboat = true;
+			}
+			
+			currScene.moving = false;
+		});
 	} else if (dirHistory[dirHistory.length-1] == down) {
 		currScene.moving = true;
-		player.visible = false;
-		walkingClips[down].visible = true;
-		walkingClips[down].play();
+		if (!currScene.inboat) {
+			player.visible = false;
+			walkingClips[down].visible = true;
+			walkingClips[down].play();
+		}
 		player.texture = playerTextures[down];
 		
 		if ((tiley == 3 && tilex == 57) || 
@@ -305,7 +474,7 @@ playGame.prototype.move = function() {
 		(tiley == 13 && (tilex == 47 || (tilex >= 49 && tilex <= 52) || (tilex >= 61 && tilex <= 64))) || 
 		(tiley == 14 && (tilex == 25 || tilex >= 66))|| 
 		(tiley == 16 && (tilex == 48 || tilex >= 65)) || 
-		(tiley == 17 && ((tilex >= 17 && tilex <= 19) || tilex == 21 || tilex == 22 || (tilex >= 30 && tilex <= 32) || tilex == 37 || tilex == 49 || tilex == 59)) || 
+		(tiley == 17 && (tilex == 7 || tilex == 8 || tilex == 10 || tilex == 11 || (tilex >= 17 && tilex <= 19) || tilex == 21 || tilex == 22 || (tilex >= 30 && tilex <= 32) || tilex == 37 || tilex == 49 || tilex == 59)) || 
 		(tiley == 18 && (tilex == 23 || tilex == 54 || tilex >= 64)) || 
 		(tiley == 19 && (tilex == 24 || tilex == 33 || tilex == 34 || tilex == 36 || tilex == 50 || tilex >= 62)) || 
 		(tiley == 20 && (tilex == 28 || tilex == 29 || tilex == 35 || tilex >= 60)) || 
@@ -334,14 +503,14 @@ playGame.prototype.move = function() {
 		(tiley == 50 && ((tilex >= 11 && tilex <= 13) || tilex == 19 || tilex == 20 || (tilex >= 26 && tilex <= 28) || (tilex >= 30 && tilex <= 33) || tilex == 39 || tilex == 40 || tilex >= 55)) || 
 		(tiley == 51 && ((tilex >= 14 && tilex <= 18) || tilex == 24 || tilex == 25 || tilex == 34 || (tilex >= 41 && tilex <= 43) || (tilex >= 52 && tilex <= 54))) || 
 		(tiley == 52 && ((tilex >= 4 && tilex <= 8) || tilex == 35 || tilex == 44 || (tilex >= 46 && tilex <= 51))) || 
-		(tiley == 53 && ((tilex >= 12 && tilex <= 17) || tilex == 23 || (tilex >= 26 && tilex <= 28) || tilex == 31 || tilex == 36 || (tilex >= 58 && tilex <= 62) || tilex >= 66)) || 
+		(tiley == 53 && ((tilex >= 12 && tilex <= 17) || tilex == 23 || (tilex >= 26 && tilex <= 28) || tilex == 31 || tilex == 36 || (tilex == 45 && (tilex != boatx || tiley != (boaty-1))) || (tilex >= 58 && tilex <= 62) || tilex >= 66)) || 
 		(tiley == 54 && (tilex <= 3 || tilex == 6 || tilex == 11 || (tilex >= 18 && tilex <= 20) || tilex == 37 || (tilex >= 48 && tilex <= 53))) || 
 		(tiley == 55 && (tilex == 14 || tilex == 21 || tilex == 38 || tilex == 47 || tilex == 54 || tilex == 63)) || 
 		(tiley == 56 && (tilex <= 5 || tilex == 7 || tilex == 10 || (tilex >= 29 && tilex <= 31) || tilex == 46)) || 
 		(tiley == 57 && ((tilex >= 14 && tilex <= 16) || tilex == 22 || tilex == 34 || tilex == 51)) || 
 		(tiley == 58 && (tilex == 23 || tilex == 26 || tilex == 27 || tilex == 49)) || 
-		(tiley == 59 && (tilex == 18 || tilex == 21 || tilex == 22 || tilex == 33 || tilex == 34 || tilex == 38 || tilex == 54 || tilex == 58)) || 
-		(tiley == 60 && (tilex == 13 || tilex == 14 || tilex == 30 || tilex == 46 || tilex == 50 || tilex == 60)) || 
+		(tiley == 59 && (tilex == 18 || tilex == 21 || tilex == 22 || tilex == 33 || tilex == 34 || tilex == 38 || tilex == 58)) || 
+		(tiley == 60 && (tilex == 13 || tilex == 14 || tilex == 30 || tilex == 46 || tilex == 50 || tilex == 61)) || 
 		(tiley == 61 && (tilex == 10 || tilex == 20 || tilex == 24 || tilex == 25 || tilex == 37 || tilex == 47 || tilex == 53 || tilex >= 66)) || 
 		(tiley == 62 && ((tilex >= 17 && tilex <= 19) || (tilex >= 26 && tilex <= 36) || tilex == 48 || (tilex >= 59 && tilex <= 62))) || 
 		(tiley == 63 && (tilex <= 3 || (tilex >= 11 && tilex <= 16) || (tilex >= 49 && tilex <= 52))) || 
@@ -359,30 +528,51 @@ playGame.prototype.move = function() {
 			tilex = 9;
 			tiley = 24;
 			currScene.moving = false;
+			return;
+		} else if (tiley == 18 && tilex == 9) {
+			playerContainer.y = playerContainer.y + 192;
+			tiley = 24;
+			currScene.follow = true;
+			currScene.moving = false;
+			return;
 		} else if (tiley == 5 && tilex == 4) {
 			playerContainer.y = playerContainer.y + 800;
 			tiley = 30;
 			currScene.moving = false;
-		} else {
-			tiley++;
-			createjs.Tween.get(playerContainer).to({y: playerContainer.y + 32}, 250).call(function() {
-				currScene.moving = false;
-			});
+			return;
 		}
+		
+		tiley++;
+		createjs.Tween.get(playerContainer).to({y: playerContainer.y + 32}, 250).call(function() {
+			if (tilex == boatx && tiley == boaty && !currScene.inboat) {
+				walkingClips[down].visible = false;
+				walkingClips[down].stop();
+				playerTextures = playerTexturesBoat;
+				player.texture = playerTextures[down];
+				player.visible = true;
+				boat.visible = false;
+				currScene.inboat = true;
+			}
+			
+			currScene.moving = false;
+		});
 	} else if (dirHistory[dirHistory.length-1] == left) {
 		currScene.moving = true;
-		player.visible = false;
-		walkingClips[left].visible = true;
-		walkingClips[left].play();
+		if (!currScene.inboat) {
+			player.visible = false;
+			walkingClips[left].visible = true;
+			walkingClips[left].play();
+		}
 		player.texture = playerTextures[left];
 		
 		if (tilex == 3 || 
 		(tilex == 4 && (tiley == 26 || tiley == 30 || (tiley >= 33 && tiley <= 36) || tiley == 58 || tiley >= 64)) || 
 		(tilex == 5 && (tiley == 25 || tiley == 37 || (tiley >= 54 && tiley <= 56))) || 
 		(tilex == 6 && (tiley == 24 || tiley == 31 || tiley == 38 || tiley == 57)) || 
-		(tilex == 7 && (tiley == 39 || tiley == 55)) || 
-		(tilex == 9 && (tiley == 49 || (tiley >= 53 && tiley <= 57))) || 
-		(tilex == 10 && tiley >= 28 && tiley <= 31) || 
+		(tilex == 7 && (tiley == 16 || tiley == 17 || tiley == 39 || tiley == 55)) || 
+		(tilex == 8 && tiley == 15) || 
+		(tilex == 9 && (tiley == 18 || tiley == 49 || (tiley >= 53 && tiley <= 57))) || 
+		(tilex == 10 && ((tiley >= 28 && tiley <= 31) || (tiley == 61 && (tilex != (boatx+1) || tiley != boaty)))) || 
 		(tilex == 11 && (tiley == 35 || tiley == 36 || tiley == 50 || (tiley >= 58 && tiley <= 60) || tiley == 62 || tiley == 63)) || 
 		(tilex == 12 && (tiley == 56 || tiley == 57)) || 
 		(tilex == 13 && tiley == 55) || 
@@ -425,24 +615,48 @@ playGame.prototype.move = function() {
 		(tilex == 52 && (tiley <= 4 || tiley == 13 || tiley == 58)) || 
 		(tilex == 53 && ((tiley >= 9 && tiley <= 11) || (tiley >= 14 && tiley <= 16) || tiley == 53)) || 
 		(tilex == 54 && (tiley == 7 || tiley == 55 || tiley == 63 || tiley == 64)) || 
-		(tilex == 55 && (tiley <= 3 || tiley == 19 || tiley == 28 || tiley == 29 || (tiley >= 31 && tiley <= 41) || tiley == 43 || (tiley >= 56 && tiley <= 58) || (tiley >= 60 && tiley <= 62))) || 
+		(tilex == 55 && (tiley <= 3 || tiley == 19 || tiley == 28 || tiley == 29 || (tiley >= 31 && tiley <= 41) || tiley == 43 || (tiley >= 56 && tiley <= 62))) || 
 		(tilex == 56 && (tiley == 27 || tiley == 52)) || 
 		(tilex == 57 && (tiley == 10 || tiley == 11 || tiley == 26 || (tiley >= 33 && tiley <= 40) || tiley >= 66)) || 
 		(tilex == 58 && (tiley == 4 || tiley == 39)) || 
 		(tilex == 59 && ((tiley >= 13 && tiley <= 15) || tiley == 25 || (tiley >= 55 && tiley <= 58) || (tiley >= 60 && tiley <= 62))) || 
 		(tilex == 60 && (tiley == 11 || tiley == 18)) || 
-		(tilex == 61 && ((tiley >= 6 && tiley <= 8) || tiley == 61)) || 
+		(tilex == 61 && tiley >= 6 && tiley <= 8) || 
+		(tilex == 62 && tiley == 61) || 
 		(tilex == 63 && (tiley == 33 || tiley == 47 || tiley == 54 || tiley == 55)) || 
 		(tilex == 64 && (tiley == 8 || tiley == 12 || tiley == 24 || tiley == 32 || tiley == 35 || tiley == 36 || (tiley >= 56 && tiley <= 63))) || 
 		(tilex == 65 && ((tiley >= 14 && tiley <= 16) || tiley == 31 || tiley == 46 || tiley == 51))) {
 			currScene.moving = false;
 			return;
-		} else {
-			tilex--;
-			createjs.Tween.get(playerContainer).to({x: playerContainer.x - 32}, 250).call(function() {
-				currScene.moving = false;
-			});
+		} else if (tilex == 39 && tiley == 59) {
+			playerTextures = playerTexturesNoHat;
+			currScene.inboat = false;
+			boat.texture = boatTextures[left];
+			player.texture = playerTextures[left];
+			player.visible = false;
+			boatx = tilex;
+			boaty = tiley;
+			boat.x = playerContainer.x;
+			boat.y = playerContainer.y+32;
+			boat.visible = true;
+			walkingClips[left].visible = true;
+			walkingClips[left].play();
 		}
+		
+		tilex--;
+		createjs.Tween.get(playerContainer).to({x: playerContainer.x - 32}, 250).call(function() {
+			if (tilex == boatx && tiley == boaty && !currScene.inboat) {
+				walkingClips[left].visible = false;
+				walkingClips[left].stop();
+				playerTextures = playerTexturesBoat;
+				player.texture = playerTextures[left];
+				player.visible = true;
+				boat.visible = false;
+				currScene.inboat = true;
+			}
+			
+			currScene.moving = false;
+		});
 	}
 }
 
@@ -455,6 +669,14 @@ function keydownEventHandler(e) {
 	e.preventDefault();
 	if (e.repeat) {
 		return;
+	}
+	
+	if (e.keyCode == 72) {
+		if (currScene.hashat) {
+			currScene.hashat = false;
+		} else {
+			currScene.hashat = true;
+		}
 	}
 	
 	if (e.keyCode == 87 && dirHistory.indexOf(up) == -1) { //move up
@@ -483,7 +705,9 @@ function keyupEventHandler(e) {
 function animate() {
 	requestAnimationFrame(animate);
 	
-	currScene.updateCamera();
+	if (currScene.follow) {
+		currScene.updateCamera();
+	}
 	currScene.move();
 	
 	renderer.render(stage);
