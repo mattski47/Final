@@ -10,26 +10,14 @@ stage.scale.y = scale;
 
 var gameContainer = new PIXI.Container();
 var objectContainer = new PIXI.Container();
-var menuContainer = new PIXI.Container();
 var endContainer = new PIXI.Container();
-var instructionsContainer = new PIXI.Container();
-var onGame = false;
-var style = {fill: "white"};
-var style2 = {font: '16px Arial', fill: "black", wordWrap: true, wordWrapWidth: 190};
-var creditsDisplay = new PIXI.Text("By: Matthew Siewierski", style);
-var instructionsDisplay = new PIXI.Text("How to Play:\n\nUse 'wasd' to move around and find various items around the map. Once you think you have them all, go back to the house to return to the main menu.", style2);
-
-var playButton;
-var instructionsButton;
-var returnHome;
-var background;
-var title;
+var playerContainer = new PIXI.Container();
 
 var music;
 var currScene;
 var player;
 var textborder;
-var message = new PIXI.Text("Find some tools, then find some gems! I recommend you start in some direction other than directly right.", {wordWrap: true, wordWrapWidth: 800});
+var message = new PIXI.Text("Find some tools, then find some " + '"' + "magic" + '"' + " gems! Use 'wasd' to move and 'space' to interact.", {wordWrap: true, wordWrapWidth: 800});
 message.scale.x = 0.23;
 message.scale.y = 0.23;
 var world;
@@ -70,7 +58,6 @@ var cavexObject;
 var forestxObject;
 var islandxObject;
 
-var playerContainer = new PIXI.Container();
 var playerTextures = [];
 var playerTexturesNoHat = [];
 var playerTexturesHat = [];
@@ -82,12 +69,19 @@ var endClip;
 
 var boatTextures;
 var tu;
-	//.add("music.mp3")
+
+var inboatMusic;
+var incaveMusic;
+var outsideMusic;
+
 //load stuff 
 PIXI.loader
 	.add('map', "assets/worldmap2.json")
 	.add("assets/tileset2.png")
 	.add("assets/stuff.json")
+	.add("inboat.mp3")
+	.add("incave.mp3")
+	.add("outside.mp3")
 	.load(ready);
 	
 function ready() {
@@ -133,9 +127,18 @@ function ready() {
 	walkingClipsNoHat = [new PIXI.extras.MovieClip.fromFrames(["walkingup1.png", "walkingup2.png", "walkingup3.png", "walkingup4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingright1.png", "walkingright2.png", "walkingright3.png", "walkingright4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingdown1.png", "walkingdown2.png", "walkingdown3.png", "walkingdown4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingleft1.png", "walkingleft2.png", "walkingleft3.png", "walkingleft4.png"])];
 	walkingClipsHat = [new PIXI.extras.MovieClip.fromFrames(["walkinguphat1.png", "walkinguphat2.png", "walkinguphat3.png", "walkinguphat4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingrighthat1.png", "walkingrighthat2.png", "walkingrighthat3.png", "walkingrighthat4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkingdownhat1.png", "walkingdownhat2.png", "walkingdownhat3.png", "walkingdownhat4.png"]), new PIXI.extras.MovieClip.fromFrames(["walkinglefthat1.png", "walkinglefthat2.png", "walkinglefthat3.png", "walkinglefthat4.png"])];
 	walkingClips = walkingClipsNoHat;
-	//music = PIXI.audioManager.getAudio("music.mp3");
-	//music.loop = true;
-	//music.volume = 0.6;
+	
+	inboatMusic = PIXI.audioManager.getAudio("inboat.mp3");
+	inboatMusic.loop = true;
+	inboatMusic.volume = 0.6;
+	
+	incaveMusic = PIXI.audioManager.getAudio("incave.mp3");
+	incaveMusic.loop = true;
+	incaveMusic.volume = 0.6;
+	
+	outsideMusic = PIXI.audioManager.getAudio("outside.mp3");
+	outsideMusic.loop = true;
+	outsideMusic.volume = 0.6;
 	
 	stage.addChild(gameContainer);
 	currScene = new playGame();
@@ -171,6 +174,7 @@ var playGame = function() {
 	this.facing = down;
 	this.ridenboat = false;
 	this.enteredcave = false;
+	this.gameover = false;
 	this.gemsfound = 0;
 	
 	playerTextures = playerTexturesNoHat;
@@ -344,7 +348,8 @@ var playGame = function() {
 	endClip.loop = false;
 	endClip.onComplete = function() {
 		playerContainer.removeChild(endClip);
-		message.text = "They disapeared! How magical.\n";
+		currScene.gameover = true;
+		message.text = "They disapeared! How magical.\nThank you for playing. Refresh the page to play again.";
 	}
 	
 	tilex = 52;
@@ -422,6 +427,8 @@ var playGame = function() {
 	playerContainer.addChild(digging);
 	playerContainer.addChild(digginghat);
 	
+	outsideMusic.play();
+	
 	stage.x = -playerContainer.x*scale + renderer.width/2 - playerContainer.width/2*scale;
 	stage.y = -playerContainer.y*scale + renderer.height/2 + playerContainer.height/2*scale;
 }
@@ -450,6 +457,8 @@ playGame.prototype.move = function() {
 			currScene.moving = false;
 			return;
 		} else if (tiley == 24 && tilex == 9) {
+				outsideMusic.stop();
+				incaveMusic.play();
 			if (currScene.hashat) {
 				playerContainer.x = playerContainer.x + 352;
 				playerContainer.y = playerContainer.y - 192;
@@ -460,6 +469,7 @@ playGame.prototype.move = function() {
 				tilex = 20;
 				tiley = 18;
 				currScene.moving = false;
+				
 				if (!currScene.enteredcave) {
 					message.text = "Ah that's better.\n";
 					currScene.enteredcave = true;
@@ -491,6 +501,9 @@ playGame.prototype.move = function() {
 			boat.visible = true;
 			walkingClips[up].visible = true;
 			walkingClips[up].play();
+			
+			inboatMusic.stop();
+			outsideMusic.play();
 		}
 		
 		tiley--;
@@ -522,6 +535,9 @@ playGame.prototype.move = function() {
 			boat.visible = true;
 			walkingClips[right].visible = true;
 			walkingClips[right].play();
+			
+			inboatMusic.stop();
+			outsideMusic.play();
 		}
 		
 		tilex++;
@@ -534,6 +550,9 @@ playGame.prototype.move = function() {
 				player.visible = true;
 				boat.visible = false;
 				currScene.inboat = true;
+				
+				outsideMusic.stop();
+				inboatMusic.play();
 			}
 			
 			currScene.moving = false;
@@ -561,6 +580,9 @@ playGame.prototype.move = function() {
 			tilex = 9;
 			tiley = 23;
 			currScene.moving = false;
+			
+			incaveMusic.stop();
+			outsideMusic.play();
 			return;
 		} else if (tiley == 16 && tilex == 8) {
 			playerContainer.x = playerContainer.x + 32;
@@ -568,6 +590,9 @@ playGame.prototype.move = function() {
 			tilex = 9
 			tiley = 23;
 			currScene.moving = false;
+			
+			incaveMusic.stop();
+			outsideMusic.play();
 			return;
 		} else if (tiley == 5 && tilex == 4) {
 			playerContainer.y = playerContainer.y + 800;
@@ -586,6 +611,9 @@ playGame.prototype.move = function() {
 				player.visible = true;
 				boat.visible = false;
 				currScene.inboat = true;
+				
+				outsideMusic.stop();
+				inboatMusic.play();
 			}
 			
 			currScene.moving = false;
@@ -616,6 +644,9 @@ playGame.prototype.move = function() {
 			boat.visible = true;
 			walkingClips[left].visible = true;
 			walkingClips[left].play();
+			
+			inboatMusic.stop();
+			outsideMusic.play();
 		}
 		
 		tilex--;
@@ -628,6 +659,9 @@ playGame.prototype.move = function() {
 				player.visible = true;
 				boat.visible = false;
 				currScene.inboat = true;
+				
+				outsideMusic.stop();
+				inboatMusic.play();
 				if (!currScene.ridenboat) {
 					currScene.ridenboat = true;
 					message.text = "Ha! And they said bringing 25 gallons of gasoline was unnecessary. Look at me now!"
@@ -720,9 +754,8 @@ playGame.prototype.interact = function() {
 		}
 		
 		if (currScene.facing == up) {
-			if (tilex == 4 && tiley == 32) {
+			if (tilex == 4 && tiley == 32 && !currScene.hasshovel) {
 				currScene.hasshovel = true;
-				//shovel.visible = false;
 				objectContainer.removeChild(shovel);
 				currScene.moving = false;
 				message.text = "Found: Shovel!\nWhy did I go digging for treasure without one?";
@@ -730,14 +763,12 @@ playGame.prototype.interact = function() {
 				if (currScene.hasshovel) {
 					player.visible = false;
 					playerContainer.addChild(hitting);
-					//hitting.visible = true;
 					hitting.play();
-					
 				} else {
 					currScene.moving = false;
 					message.text = "Looks like someone tore the boards off but forgot to break the window.";
 				}
-			} else if (tilex == 25 && tiley == 13) {
+			} else if (tilex == 25 && tiley == 13 && !currScene.haspick) {
 				currScene.haspick = true;
 				pick.visible = false;
 				currScene.moving = false;
@@ -748,7 +779,7 @@ playGame.prototype.interact = function() {
 			}
 			
 		} else if (currScene.facing == right) {
-			if (tilex == 7 && tiley == 4) {
+			if (tilex == 7 && tiley == 4 && !currScene.hashat) {
 				currScene.hashat = true;
 				objectContainer.removeChild(hat);
 				currScene.moving = false;
@@ -813,7 +844,7 @@ playGame.prototype.interact = function() {
 			}
 			
 		} else if (currScene.facing == left) {
-			if (tilex == 57 && tiley == 10) {
+			if (tilex == 57 && tiley == 10 && !currScene.hasaxe) {
 				objectContainer.removeChild(axe);
 				currScene.hasaxe = true;
 				currScene.moving = false;
@@ -886,60 +917,10 @@ function animate() {
 	
 	currScene.updateCamera();
 	currScene.move();
-	
+
 	renderer.render(stage);
 }
 
 
 document.addEventListener('keydown', keydownEventHandler);
 document.addEventListener('keyup', keyupEventHandler);
-
-
-/*
-//main menu
-var mainMenu = function () {
-	music.play();
-	
-	onGame = false;
-	
-	
-	title.anchor.x = 0.5;
-	title.anchor.y = 0.5;
-	title.position.x = renderer.width/2;
-	title.position.y = 130;
-	
-	//place play button
-	playButton.anchor.x = 0.5;
-	playButton.anchor.y = 0.5;
-	playButton.position.x = renderer.width/2;
-	playButton.position.y = renderer.height/2+75;
-	
-	instructionsButton.anchor.x = 0.5;
-	instructionsButton.anchor.y = 0.5;
-	instructionsButton.position.x = renderer.width/2;
-	instructionsButton.position.y = renderer.height/2+150;
-	
-	menuContainer.addChild(background);
-	menuContainer.addChild(title);
-	menuContainer.addChild(playButton);
-	menuContainer.addChild(instructionsButton);
-	
-	playButton.interactive = true;
-	instructionsButton.interactive = true;
-	
-	
-	playButton.mousedown = function(mouseData) {
-		menuContainer.removeChildren();
-		stage.removeChild(menuContainer);
-		stage.addChild(gameContainer);
-		currScene = new playGame();
-	}
-	
-	instructionsButton.mousedown = function(mousedata) {
-		menuContainer.removeChildren();
-		stage.removeChild(menuContainer);
-		stage.addChild(instructionsContainer);
-		currScene = new instructionsPage();
-	}
-}
-*/
